@@ -109,3 +109,5 @@ dist
 # IDEA
 client/.idea
 server/.idea
+
+.idea/

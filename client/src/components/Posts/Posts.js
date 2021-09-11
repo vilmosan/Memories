@@ -10,11 +10,11 @@ const Posts = () => {
 	console.log(posts);
 
 	return (
-		<>
+		<React.Fragment>
 			<h1>POSTS</h1>
 			<Post></Post>
 			<Post></Post>
-		</>
+		</React.Fragment>
 	);
 };
 

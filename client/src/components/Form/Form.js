@@ -27,11 +27,11 @@ const Form = ({currentId, setCurrentId}) => {
 
 		if (currentId === 0) {
 			dispatch(createPost(postData));
-			clearInputFields();
 		} else {
 			dispatch(updatePost(currentId, postData));
-			clearInputFields();
 		}
+		clearInputFields();
+
 	};
 
 	useEffect(() => {
@@ -41,7 +41,7 @@ const Form = ({currentId, setCurrentId}) => {
 	return (
 		<Paper className={classes.paper}>
 			<form autoComplete={"off"} noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
-				<Typography variant={"h6"}>Creating a memory:</Typography>
+				<Typography variant={"h6"}>{currentId ? "Editing" : "Creating"} a memory:</Typography>
 				<TextField
 					name={"creator"}
 					variant={"outlined"}

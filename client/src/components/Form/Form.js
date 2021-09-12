@@ -1,11 +1,12 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import useStyles from './styles';
-import { TextField, Button, Typography, Paper } from "@material-ui/core";
+import {Button, Paper, TextField, Typography} from "@material-ui/core";
 import FileBase from 'react-file-base64';
-import { useDispatch } from "react-redux";
-import {createPost} from "../../api";
+import {useDispatch, useSelector} from "react-redux";
+import {createPost, updatePost} from "../../actions/posts";
 
-const Form = () => {
+const Form = ({currentId, setCurrentId}) => {
+	const post = useSelector((state) => currentId ? state.posts.find((p) => p._id === currentId) : null);
 	const classes = useStyles();
 	const [postData, setPostData] = useState({
 		creator: '',
@@ -16,20 +17,26 @@ const Form = () => {
 	});
 	const dispatch = useDispatch();
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		console.log(postData)
-		try {
-			dispatch(createPost(postData)).then(r => console.log(r)).catch(e => console.log(e));
-
-		} catch (e) {
-			console.log(e)
-		}
-	}
-
 	const clearInputFields = () => {
+		setCurrentId(0);
+		setPostData({creator: '', title: '', message: '', tags: '', selectedFile: ''});
+	};
 
-	}
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+
+		if (currentId === 0) {
+			dispatch(createPost(postData));
+			clearInputFields();
+		} else {
+			dispatch(updatePost(currentId, postData));
+			clearInputFields();
+		}
+	};
+
+	useEffect(() => {
+		if (post) setPostData(post);
+	}, [post])
 
 	return (
 		<Paper className={classes.paper}>
@@ -71,11 +78,13 @@ const Form = () => {
 					<FileBase
 						type={"file"}
 						multiple={false}
-						onDone={({base64}) => setPostData({ ...postData, selectedFile: base64})}>
+						onDone={({base64}) => setPostData({...postData, selectedFile: base64})}>
 					</FileBase>
 				</div>
-				<Button className={classes.buttonSubmit} variant={"contained"} color={"primary"} size={"large"} type={"submit"} fullWidth>Submit</Button>
-				<Button variant={"contained"} color={"secondary"} size={"small"} onClick={clearInputFields} fullWidth>Clear</Button>
+				<Button className={classes.buttonSubmit} variant={"contained"} color={"primary"} size={"large"}
+						type={"submit"} fullWidth>Submit</Button>
+				<Button variant={"contained"} color={"secondary"} size={"small"} onClick={clearInputFields}
+						fullWidth>Clear</Button>
 			</form>
 		</Paper>
 	)

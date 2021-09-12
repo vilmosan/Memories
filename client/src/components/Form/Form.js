@@ -18,14 +18,14 @@ const Form = ({currentId, setCurrentId}) => {
 	const dispatch = useDispatch();
 
 	const clearInputFields = () => {
-		setCurrentId(0);
+		setCurrentId(null);
 		setPostData({creator: '', title: '', message: '', tags: '', selectedFile: ''});
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		if (currentId === 0) {
+		if (currentId === null) {
 			dispatch(createPost(postData));
 		} else {
 			dispatch(updatePost(currentId, postData));
@@ -72,7 +72,7 @@ const Form = ({currentId, setCurrentId}) => {
 					label={"Tags"}
 					fullWidth
 					value={postData.tags}
-					onChange={(e) => setPostData({...postData, tags: e.target.value})}>
+					onChange={(e) => setPostData({...postData, tags: e.target.value.split(',')})}>
 				</TextField>
 				<div className={classes.fileInput}>
 					<FileBase

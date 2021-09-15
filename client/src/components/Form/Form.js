@@ -9,26 +9,27 @@ const Form = ({currentId, setCurrentId}) => {
 	const post = useSelector((state) => currentId ? state.posts.find((p) => p._id === currentId) : null);
 	const classes = useStyles();
 	const [postData, setPostData] = useState({
-		creator: '',
 		title: '',
 		message: '',
 		tags: '',
 		selectedFile: ''
 	});
+	const user = JSON.parse(localStorage.getItem('profile'));
+
 	const dispatch = useDispatch();
 
 	const clearInputFields = () => {
 		setCurrentId(null);
-		setPostData({creator: '', title: '', message: '', tags: '', selectedFile: ''});
+		setPostData({title: '', message: '', tags: '', selectedFile: ''});
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		if (currentId === null) {
-			dispatch(createPost(postData));
+			dispatch(createPost({...postData, name: user?.result?.name}));
 		} else {
-			dispatch(updatePost(currentId, postData));
+			dispatch(updatePost(currentId, {...postData, name: user?.result?.name}));
 		}
 		clearInputFields();
 
@@ -38,18 +39,20 @@ const Form = ({currentId, setCurrentId}) => {
 		if (post) setPostData(post);
 	}, [post])
 
+	if(!user?.result?.name) {
+		return (
+			<Paper className={classes.paper}>
+				<Typography variant={"h6"} align={"center"}>
+					Please login to create your own memories and like other's posts.
+				</Typography>
+			</Paper>
+		)
+	}
+
 	return (
 		<Paper className={classes.paper}>
 			<form autoComplete={"off"} noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
 				<Typography variant={"h6"}>{currentId ? "Editing" : "Creating"} a memory:</Typography>
-				<TextField
-					name={"creator"}
-					variant={"outlined"}
-					label={"Creator"}
-					fullWidth
-					value={postData.creator}
-					onChange={(e) => setPostData({...postData, creator: e.target.value})}>
-				</TextField>
 				<TextField
 					name={"title"}
 					variant={"outlined"}

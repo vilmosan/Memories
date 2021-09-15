@@ -8,6 +8,10 @@ import Icon from './icon';
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
 import dotenv from "dotenv";
+import {login, register } from '../../actions/auth';
+
+
+const initialState = { firstName: '', lastName: '', email: '', password: '', confirmPassword: ''}
 
 const Auth = () => {
 	const classes = useStyles();
@@ -15,19 +19,26 @@ const Auth = () => {
 	const history = useHistory();
 	const [showPassword, setShowPassword] = useState(false);
 	const [isSignup, setIsSignup] = useState(false);
+	const [formData, setFormData] = useState(initialState);
 
 	dotenv.config();
-	const handleSubmit = () => {
+	const handleSubmit = (e) => {
+		e.preventDefault();
 
+		if(isSignup){
+			dispatch(register(formData, history));
+		} else {
+			dispatch(login(formData, history));
+		}
 	};
 
-	const handleChange = () => {
-
+	const handleChange = (e) => {
+		setFormData({...formData, [e.target.name] : e.target.value})
 	};
 
 	const switchMode = () => {
 		setIsSignup((prevIsSignUp) => !prevIsSignUp);
-		handleShowPassword(false);
+		setShowPassword(false);
 	};
 
 	const handleShowPassword = () => {
